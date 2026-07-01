@@ -1,0 +1,54 @@
+name: Análise Diária de Risco de Reimplantação
+
+on:
+  schedule:
+    # Segunda a sexta, às 08h00 horário de Brasília (11:00 UTC)
+    - cron: "0 11 * * 1-5"
+  workflow_dispatch:   # Permite rodar manualmente pelo painel do GitHub Actions
+
+jobs:
+  analise:
+    name: Executar análise de risco
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Criar diretório de logs
+        run: mkdir -p logs data
+
+      - name: Executar análise
+        env:
+          HUBSPOT_API_KEY:    ${{ secrets.HUBSPOT_API_KEY }}
+          OPENAI_API_KEY:     ${{ secrets.OPENAI_API_KEY }}
+          SENDGRID_API_KEY:   ${{ secrets.SENDGRID_API_KEY }}
+          ALERT_EMAIL_FROM:   ${{ secrets.ALERT_EMAIL_FROM }}
+          GERENTE_CS_EMAIL:   ${{ secrets.GERENTE_CS_EMAIL }}
+        run: python scripts/run_daily_analysis.py
+
+      - name: Upload do histórico de scores
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: clientes-monitorados-${{ github.run_number }}
+          path: data/clientes_monitorados.json
+          retention-days: 90
+
+      - name: Upload dos logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-${{ github.run_number }}
+          path: logs/
+          retention-days: 30

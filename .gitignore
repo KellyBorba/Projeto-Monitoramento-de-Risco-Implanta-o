@@ -1,0 +1,33 @@
+﻿# -- Seguranca — NUNCA commitar ------------------------------------------------
+.env
+*.env
+
+# -- Dados sensiveis de clientes -----------------------------------------------
+dados-reais.json
+*.json.bak
+
+# -- Videos e GIFs gerados localmente -----------------------------------------
+demo_dashboard.mp4
+demo_dashboard.gif
+
+# -- Node.js ------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# -- Python -------------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# -- Logs e temporarios -------------------------------------------------------
+*.log
+sync_output.txt
+sync_error.txt
+
+# -- Sistema ------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini

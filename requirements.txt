@@ -1,0 +1,20 @@
+# Core
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+loguru>=0.7.0
+
+# HubSpot
+hubspot-api-client>=8.0.0
+
+# IA — Classificação de tickets via Claude
+anthropic>=0.25.0
+
+# Fuzzy matching — agrupamento de temas similares
+rapidfuzz>=3.0.0
+
+# Dashboard
+streamlit>=1.32.0
+
+# Testes
+pytest>=7.0.0
+pytest-cov>=4.0.0

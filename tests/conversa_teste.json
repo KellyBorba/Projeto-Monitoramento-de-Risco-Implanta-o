@@ -1,0 +1,75 @@
+[
+  {
+    "id": "msg_001",
+    "de": "cliente",
+    "nome": "Marcos Oliveira",
+    "empresa": "RH Conecta Ltda",
+    "email": "marcos.oliveira@rhconecta.com.br",
+    "texto": "Oi, boa tarde! Estou tendo um problema aqui na plataforma. Eu já entrei em contato semana passada mas o problema continua.",
+    "hora": "2026-06-30T14:01:00"
+  },
+  {
+    "id": "msg_002",
+    "de": "suporte",
+    "nome": "Ana — Suporte Twygo",
+    "texto": "Boa tarde, Marcos! Pode me descrever o que está acontecendo?",
+    "hora": "2026-06-30T14:02:00"
+  },
+  {
+    "id": "msg_003",
+    "de": "cliente",
+    "nome": "Marcos Oliveira",
+    "empresa": "RH Conecta Ltda",
+    "email": "marcos.oliveira@rhconecta.com.br",
+    "texto": "Olha, eu não consigo criar um curso novo de jeito nenhum. Toda vez que clico em 'Novo curso' aparece uma tela em branco e não acontece nada. Isso já aconteceu umas 3 vezes essa semana. Tô perdendo tempo e a minha equipe tá esperando o treinamento.",
+    "hora": "2026-06-30T14:03:00"
+  },
+  {
+    "id": "msg_004",
+    "de": "suporte",
+    "nome": "Ana — Suporte Twygo",
+    "texto": "Entendo, Marcos. Consegue me dizer qual navegador está usando?",
+    "hora": "2026-06-30T14:04:00"
+  },
+  {
+    "id": "msg_005",
+    "de": "cliente",
+    "nome": "Marcos Oliveira",
+    "empresa": "RH Conecta Ltda",
+    "email": "marcos.oliveira@rhconecta.com.br",
+    "texto": "Chrome. Mas olha, não é só isso. Eu também não tô conseguindo cadastrar novos usuários. Quando clico em 'Adicionar usuário' aparece um erro 500. Já tentei no Edge também, mesmo erro. Isso tá me deixando muito frustrado porque a gente pagou pelo sistema e não consegue usar direito.",
+    "hora": "2026-06-30T14:06:00"
+  },
+  {
+    "id": "msg_006",
+    "de": "suporte",
+    "nome": "Ana — Suporte Twygo",
+    "texto": "Peço desculpas pelo transtorno. Vou verificar o que pode estar causando isso.",
+    "hora": "2026-06-30T14:07:00"
+  },
+  {
+    "id": "msg_007",
+    "de": "cliente",
+    "nome": "Marcos Oliveira",
+    "empresa": "RH Conecta Ltda",
+    "email": "marcos.oliveira@rhconecta.com.br",
+    "texto": "Outra coisa: a gente contratou o módulo de trilhas de aprendizado mas até hoje ninguém me explicou como usar. Na implantação passaram muito rápido por isso e eu não entendi. Já fiz essa mesma pergunta antes e nunca recebi uma resposta completa. Honestamente, se continuar assim vou ter que reconsiderar a contratação.",
+    "hora": "2026-06-30T14:09:00"
+  },
+  {
+    "id": "msg_008",
+    "de": "suporte",
+    "nome": "Ana — Suporte Twygo",
+    "texto": "Compreendo sua insatisfação, Marcos. Vou escalar para nossa equipe técnica.",
+    "hora": "2026-06-30T14:10:00"
+  },
+  {
+    "id": "msg_009",
+    "de": "cliente",
+    "nome": "Marcos Oliveira",
+    "empresa": "RH Conecta Ltda",
+    "email": "marcos.oliveira@rhconecta.com.br",
+    "texto": "Escalar de novo? Isso sempre acontece e nunca resolve. Na semana passada disseram que iam resolver o problema de criar curso e até agora nada. Preciso de uma solução de verdade, não de mais promessas.",
+    "hora": "2026-06-30T14:12:00"
+  }
+]
