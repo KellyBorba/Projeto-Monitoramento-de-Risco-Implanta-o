@@ -36,7 +36,9 @@ def _get_openai():
     return _openai_client
 
 # ─── Config ───────────────────────────────────────────────────────────────────
-DADOS_REAIS = Path(r"C:\Users\kelly\OneDrive\Documentos\Claude\Gestão de incidentes\dados-reais.json")
+# Caminho local (Windows) — ignorado no Streamlit Cloud, que busca via API
+_LOCAL_JSON = Path(r"C:\Users\kelly\OneDrive\Documentos\Claude\Gestão de incidentes\dados-reais.json")
+DADOS_REAIS = _LOCAL_JSON if _LOCAL_JSON.exists() else None
 
 CORES = {
     "roxo":    "#9349DE",
@@ -133,13 +135,90 @@ def _mes_label(mes_str: str) -> str:
         return mes_str
 
 # ─── Carregar e processar ─────────────────────────────────────────────────────
-@st.cache_data(ttl=60)
-def carregar_dados():
-    if not DADOS_REAIS.exists():
+def _buscar_hubspot_api() -> list:
+    """Busca tickets diretamente da API HubSpot (usado no Streamlit Cloud)."""
+    hub_key = os.getenv("HUBSPOT_API_KEY", "")
+    if not hub_key:
         return []
 
-    with open(DADOS_REAIS, encoding="utf-8-sig") as f:
-        registros = json.load(f)
+    headers = {"Authorization": f"Bearer {hub_key}", "Content-Type": "application/json"}
+    properties = ["subject", "content", "hs_ticket_category", "hs_ticket_priority",
+                  "hs_pipeline_stage", "createdate", "closed_date", "hubspot_owner_id"]
+
+    # Owners
+    try:
+        r_own = requests.get("https://api.hubapi.com/crm/v3/owners?limit=100", headers=headers, timeout=15)
+        owner_map = {o["id"]: f"{o.get('firstName','')} {o.get('lastName','')}".strip() or o.get("email","")
+                     for o in r_own.json().get("results", [])}
+    except Exception:
+        owner_map = {}
+
+    STAGES_FECHADOS = {"151512326","1301981612","1276861825","151781184",
+                       "151382299","151382300","151550800","151550801"}
+
+    inicio = datetime(2026, 1, 1)
+    ontem  = datetime.utcnow().replace(hour=23, minute=59, second=59)
+    todos, vistos = [], set()
+
+    cursor = inicio
+    while cursor < ontem:
+        fim_mes = datetime(cursor.year, cursor.month % 12 + 1, 1) if cursor.month < 12 \
+                  else datetime(cursor.year + 1, 1, 1)
+        ate = min(fim_mes, ontem)
+        after = None
+        while True:
+            body = {
+                "filterGroups": [{"filters": [
+                    {"propertyName": "createdate", "operator": "GTE", "value": str(int(cursor.timestamp()*1000))},
+                    {"propertyName": "createdate", "operator": "LTE", "value": str(int(ate.timestamp()*1000))},
+                ]}],
+                "properties": properties, "limit": 100,
+                **({"after": after} if after else {}),
+            }
+            try:
+                r = requests.post("https://api.hubapi.com/crm/v3/objects/tickets/search",
+                                  json=body, headers=headers, timeout=20)
+                data = r.json()
+            except Exception:
+                break
+            for t in data.get("results", []):
+                if t["id"] not in vistos:
+                    vistos.add(t["id"])
+                    p = t["properties"]
+                    todos.append({
+                        "hubId": t["id"],
+                        "subject":   p.get("subject","") or "",
+                        "content":   p.get("content","") or "",
+                        "category":  p.get("hs_ticket_category","") or "",
+                        "priority":  p.get("hs_ticket_priority","") or "",
+                        "hubClosed": p.get("hs_pipeline_stage","") in STAGES_FECHADOS,
+                        "createdate": p.get("createdate"),
+                        "closedDate": p.get("closed_date"),
+                        "hubOwner":  owner_map.get(p.get("hubspot_owner_id",""), None),
+                        "artiaTitle": None, "artiaStatus": None,
+                        "artiaClosed": None, "artiaResp": None, "artiaEnd": None,
+                    })
+            after = data.get("paging", {}).get("next", {}).get("after")
+            if not after:
+                break
+        cursor = fim_mes
+
+    return todos
+
+
+@st.cache_data(ttl=3600)
+def carregar_dados():
+    # Local (Windows): lê o JSON gerado pelo sync
+    if DADOS_REAIS and DADOS_REAIS.exists():
+        with open(DADOS_REAIS, encoding="utf-8-sig") as f:
+            registros = json.load(f)
+    else:
+        # Cloud: busca direto da API HubSpot
+        with st.spinner("Buscando tickets do HubSpot... (primeira carga ~30s)"):
+            registros = _buscar_hubspot_api()
+        if not registros:
+            return [], {}
+
 
     # Filtrar tickets válidos para análise de dores
     uteis = []
@@ -786,8 +865,11 @@ with aba2:
     st.caption(f"Visão geral de todos os tickets de {periodo_label} para tomada de decisão e ações preventivas.")
 
     # Carregar todos os tickets brutos para análise geral
-    with open(DADOS_REAIS, encoding="utf-8-sig") as _f:
-        todos_raw = json.load(_f)
+    if DADOS_REAIS and DADOS_REAIS.exists():
+        with open(DADOS_REAIS, encoding="utf-8-sig") as _f:
+            todos_raw = json.load(_f)
+    else:
+        todos_raw = _buscar_hubspot_api()
 
     # Filtrar chatbot e genéricos
     todos_validos = [
