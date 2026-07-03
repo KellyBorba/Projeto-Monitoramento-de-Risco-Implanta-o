@@ -718,7 +718,7 @@ with aba1:
             """, unsafe_allow_html=True)
 
             # ── Análise com IA ────────────────────────────────────────────────
-            if d["nivel"] in ("critico", "atencao", "observar"):
+            if d["nivel"] in ("critico", "atencao", "observar", "ok"):
                 col_ia1, col_ia2 = st.columns(2)
                 chave_analise   = f"ia_analise_{d['empresa']}"
                 chave_comunicado = f"ia_comunicado_{d['empresa']}"
